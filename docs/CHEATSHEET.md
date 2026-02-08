@@ -162,181 +162,43 @@ Introduction to the Superpowers framework. Explains how to find relevant skills,
 
 ### Core Development Workflow: Feature from Start to Finish
 
-```mermaid
-graph TD
-    A["🎯 New Feature Request<br/>or User Idea"] --> B["/brainstorm<br/>Explore & Design"]
-    B --> C{"Design<br/>Approved?"}
-    C -->|No| B
-    C -->|Yes| D["/worktree<br/>Create Isolated Workspace"]
-    D --> E["/write-plan<br/>Create Implementation Plan"]
-    E --> F["/subagent-dev<br/>OR<br/>Execute Plan Manually"]
-    F --> G["Implement Tasks"]
-    G --> H["/tdd<br/>Test-Driven Cycles"]
-    H --> I["/review<br/>Self-Review"]
-    I --> J{Critical<br/>Issues?}
-    J -->|Yes| H
-    J -->|No| K["/verify<br/>Evidence-Based Verification"]
-    K --> L{Tests<br/>Pass?}
-    L -->|No| M["/investigate<br/>Root Cause Analysis"]
-    M --> H
-    L -->|Yes| N["/finish-branch<br/>Merge/PR/Keep"]
-    N --> O["✅ Feature Shipped"]
-```
+![Core Development Workflow](images/core-workflow.png)
 
 ---
 
 ### Debugging & Troubleshooting Workflow
 
-```mermaid
-graph TD
-    A["⚠️ Test Failure<br/>or Bug Report"] --> B["/investigate<br/>Phase 1: Isolate"]
-    B --> C["Reproduce<br/>Reliably?"]
-    C -->|No| B
-    C -->|Yes| D["/investigate<br/>Phase 2: Hypothesize"]
-    D --> E["Form Evidence<br/>Based Theories"]
-    E --> F["/investigate<br/>Phase 3: Test"]
-    F --> G["Run Targeted<br/>Tests"]
-    G --> H{Root Cause<br/>Found?}
-    H -->|No| D
-    H -->|Yes| I["/tdd<br/>Implement Fix"]
-    I --> J["Write Failing<br/>Test"]
-    J --> K["Write Minimal<br/>Code"]
-    K --> L["/investigate<br/>Phase 4: Verify"]
-    L --> M["/verify<br/>Evidence-Based Verification"]
-    M --> N["✅ Bug Fixed<br/>Tests Pass"]
-```
+![Debugging & Troubleshooting Workflow](images/debugging-workflow.png)
 
 ---
 
 ### GitHub Issues Workflow (Feature + Defects)
 
-```mermaid
-graph TD
-    A["📋 GitHub Issue<br/>Created"] --> B{Type of<br/>Issue?}
-    B -->|Feature Request| C["/brainstorm<br/>Explore requirements"]
-    B -->|Bug/Defect| D["/investigate<br/>Isolate & reproduce"]
-    C --> E["/write-plan<br/>Plan implementation"]
-    D --> F["/tdd<br/>Write failing test"]
-    E --> G["/worktree<br/>Create branch"]
-    F --> G
-    G --> H["/subagent-dev<br/>Execute implementation"]
-    H --> I["/review<br/>Self-review"]
-    I --> J["/verify<br/>Test verification"]
-    J --> K{All<br/>Passing?}
-    K -->|No| L["/investigate<br/>&<br/>/tdd"]
-    L --> I
-    K -->|Yes| M["/receive-review<br/>Handle PR feedback"]
-    M --> N["/finish-branch<br/>Merge to main"]
-    N --> O["📌 Issue<br/>Resolved"]
-```
+![GitHub Issues Workflow](images/github-workflow.png)
 
 ---
 
 ### Parallel Development Workflow (Multiple Independent Tasks)
 
-```mermaid
-graph TD
-    A["🚀 Multiple Independent<br/>Tasks/Bugs"] --> B["/dispatch-agents<br/>Identify Independent<br/>Problem Domains"]
-    B --> C["Agent 1<br/>Bug/Task 1"]
-    B --> D["Agent 2<br/>Bug/Task 2"]
-    B --> E["Agent 3<br/>Bug/Task 3"]
-    C --> C1["/investigate<br/>Root cause"]
-    C1 --> C2["/tdd<br/>Implementation"]
-    D --> D1["/investigate<br/>Root cause"]
-    D1 --> D2["/tdd<br/>Implementation"]
-    E --> E1["/investigate<br/>Root cause"]
-    E1 --> E2["/tdd<br/>Implementation"]
-    C2 --> C3["/verify"]
-    D2 --> D3["/verify"]
-    E2 --> E3["/verify"]
-    C3 --> F["🔄 Collect<br/>Results"]
-    D3 --> F
-    E3 --> F
-    F --> G["✅ All Tasks<br/>Completed"]
-```
+![Parallel Development Workflow](images/parallel-workflow.png)
 
 ---
 
 ### Code Review & Refinement Workflow
 
-```mermaid
-graph TD
-    A["👀 Code Review<br/>Received"] --> B["/receive-review<br/>Evaluate feedback<br/>technically"]
-    B --> C{Feedback<br/>Sound?}
-    C -->|No| D["📢 Push back on<br/>unsound suggestions"]
-    C -->|Yes| E{Implementation<br/>Required?}
-    D --> F["/receive-review<br/>Explain rationale"]
-    E -->|Yes| G["Implement<br/>Changes"]
-    E -->|No| H["Document<br/>Why Not"]
-    F --> I["PR Updated"]
-    G --> J["/tdd<br/>Test all changes"]
-    J --> K["/review<br/>Self-review"]
-    K --> L["/verify<br/>Verify changes"]
-    L --> M["Re-request<br/>Review"]
-    H --> M
-    M --> N{Second<br/>Review<br/>Pass?}
-    N -->|No| B
-    N -->|Yes| O["✅ Code<br/>Approved"]
-```
+![Code Review & Refinement Workflow](images/review-workflow.png)
 
 ---
 
 ### Skill Creation & Documentation Workflow
 
-```mermaid
-graph TD
-    A["💡 New Skill Idea<br/>or Skill Edit"] --> B["/write-skill<br/>RED Phase:<br/>Test WITHOUT skill"]
-    B --> C["Dispatch subagents<br/>without skill"]
-    C --> D["Document baseline<br/>failures & rationalizations"]
-    E["/write-skill<br/>GREEN Phase:<br/>Write minimal skill"]
-    D --> E
-    E --> F["Create SKILL.md<br/>with YAML frontmatter"]
-    F --> G["Write skill content<br/>addressing failures"]
-    H["/write-skill<br/>Verify Phase:<br/>Test WITH skill"]
-    G --> H
-    H --> I["Dispatch subagents<br/>WITH skill<br/>to same scenarios"]
-    I --> J{Agents now<br/>comply?}
-    J -->|No| K["Refactor<br/>skill"]
-    K --> E
-    J -->|Yes| L["/write-skill<br/>REFACTOR Phase"]
-    L --> M["Close loopholes<br/>Add edge cases"]
-    M --> N{"Skill<br/>Complete?"}
-    N -->|No| H
-    N -->|Yes| O["✅ Skill Ready<br/>for Deployment"]
-```
+![Skill Creation & Documentation Workflow](images/skill-creation-workflow.png)
 
 ---
 
 ## Quick Decision Tree: Which Skill Do I Need?
 
-```mermaid
-graph TD
-    A["What am I doing?"] --> B{Starting<br/>new work?}
-    B -->|Yes| C{Clear on<br/>approach?}
-    B -->|No| D{Code<br/>broken?}
-    C -->|No| E["/brainstorm"]
-    C -->|Yes| F["/write-plan"]
-    D -->|Yes| G["/investigate"]
-    D -->|No| H{After<br/>impl?}
-    H -->|Before| I["/tdd"]
-    H -->|During| J["/review"]
-    H -->|Success?| K{Tests<br/>pass?}
-    K -->|No| G
-    K -->|Yes| L["/verify"]
-    L --> M{Ready to<br/>ship?}
-    M -->|Yes| N["/finish-branch"]
-    M -->|No| O["/review"]
-    E --> F
-    F --> P["/worktree"]
-    P --> Q{Many<br/>parallel<br/>tasks?}
-    Q -->|Yes| R["/dispatch-agents"]
-    Q -->|No| S["/subagent-dev"]
-    N --> T{Got<br/>feedback?}
-    T -->|Yes| U["/receive-review"]
-    U --> V{Agreed?}
-    V -->|No changes| N
-    V -->|Changes| I
-```
+![Decision Tree](images/decision-tree.png)
 
 ---
 
