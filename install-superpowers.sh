@@ -2,13 +2,21 @@
 set -e
 
 # ==============================================================================
-# 🦸 SUPERPOWERS FOR VS CODE - INSTALLER & UPDATER
+# 🦸 SUPERPOWERS FOR VS CODE - INSTALLER & UPDATER (v2)
 # ==============================================================================
 # This script installs the Superpowers "operating system" for GitHub Copilot.
-# It clones the source repository to a local cache and injects the necessary
-# instructions and prompt files into your current workspace's .github/ folder.
 #
-# It is IDEMPOTENT: Run it as often as you like to update to the latest version.
+# WORKFLOW:
+# 1. Shows preview of what will be installed (with explicit confirmation)
+# 2. Clones/updates Superpowers cache to ~/.cache/superpowers (shared across workspaces)
+# 3. Creates symlink: ./.superpowers → ~/.cache/superpowers (workspace-resident)
+# 4. Updates .github/copilot-instructions.md with paths using ./.superpowers/skills/
+# 5. Copies skill definitions to .github/prompts/ for VS Code slash commands
+#
+# KEY BENEFIT: All skill access is workspace-local, eliminating permission prompts
+#
+# IDEMPOTENT: Run it as often as you like to update to the latest version.
+# REVERSIBLE: Remove .superpowers symlink and restore .superpowers.old if needed.
 # ==============================================================================
 
 # --- CONFIGURATION ---

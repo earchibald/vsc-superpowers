@@ -20,6 +20,27 @@ cd vsc-superpowers
 # Command Palette > Developer: Reload Window
 ```
 
+### How Installation Works
+
+The installer uses a **workspace-resident symlink approach** to prevent permission prompts:
+
+1. **Preview Phase**: Shows what will be installed and asks for confirmation
+2. **Global Cache**: Clones Superpowers to `~/.cache/superpowers` (shared across workspaces)
+3. **Workspace Symlink**: Creates `./.superpowers → ~/.cache/superpowers` (workspace-local)
+4. **Path Updates**: Instructions reference `./.superpowers/skills/` (no absolute paths)
+5. **Prompts**: Copies skill definitions to `.github/prompts/` for slash commands
+
+**Result:** Copilot reads all skills from workspace-local paths, **eliminating permission prompts** while keeping the global cache for efficiency.
+
+### Backup & Recovery
+
+If a `.superpowers` directory already exists, the installer backs it up to `.superpowers.old`. To restore:
+
+```bash
+rm .superpowers
+mv .superpowers.old .superpowers
+```
+
 ## Available Skills (14 Total)
 
 All 14 Superpowers skills are available as slash commands:
@@ -52,6 +73,41 @@ Some skills use different names to avoid conflicts with VS Code reserved command
 
 ```bash
 ./scripts/verify-installation.sh
+```
+
+## Troubleshooting
+
+### Permission Prompts Still Appearing
+
+If VS Code continues to ask for file access permissions:
+
+1. **Verify symlink**: `ls -la .superpowers` should show `-> ~/.cache/superpowers`
+2. **Check instructions**: `grep "./.superpowers/skills" .github/copilot-instructions.md`
+3. **Reload VS Code**: Command Palette > "Developer: Reload Window"
+4. **Re-run installer**: `./install-superpowers.sh`
+
+### Skills Not Appearing in Slash Commands
+
+1. **Reload VS Code**: Command Palette > "Developer: Reload Window"
+2. **Check prompts directory**: `ls -la .github/prompts/ | grep prompt`
+3. **Verify 14 skills**: `ls -1 .github/prompts/*.prompt.md | wc -l`
+
+### Broken Installation
+
+To reset:
+
+```bash
+# Remove symlink
+rm ./.superpowers
+
+# Restore backup if exists
+mv ./.superpowers.old ./.superpowers
+
+# Remove generated files
+rm -rf .github/prompts/
+
+# Run installer again
+./install-superpowers.sh
 ```
 
 ## Updating
