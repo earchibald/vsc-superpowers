@@ -41,6 +41,34 @@ rm .superpowers
 mv .superpowers.old .superpowers
 ```
 
+## Development Setup
+
+For developers cloning this repository to contribute:
+
+```bash
+# Clone and enter the directory
+git clone https://github.com/earchibald/vsc-superpowers.git
+cd vsc-superpowers
+
+# Run the development setup script
+./scripts/setup-development.sh
+
+# This will:
+# 1. Verify the installer script
+# 2. Create necessary development directories
+# 3. Run the full Superpowers installation
+# 4. Verify all 14 skills are installed
+```
+
+The repository includes a `.gitignore` that excludes:
+- OS files (.DS_Store, Thumbs.db)
+- IDE configs (.vscode/settings.json, .idea)
+- Dependencies (node_modules, venv)
+- Build artifacts (dist, build)
+- Runtime files (.env, .cache)
+
+This keeps the cloned repository clean while allowing developers to customize their local environment without committing files.
+
 ## Available Skills (14 Total)
 
 All 14 Superpowers skills are available as slash commands:
