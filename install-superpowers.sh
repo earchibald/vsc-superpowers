@@ -55,6 +55,111 @@ SKILLS_TO_INSTALL=(
 
 echo "🦸 Superpowers Installer & Updater"
 echo "=================================="
+echo ""
+
+# --- HELPER FUNCTIONS ---
+
+# Detect what conflicts/actions will happen
+detect_conflicts() {
+    local conflicts=()
+    local actions=()
+    
+    # Check global cache status
+    if [ -d "$INSTALL_DIR" ]; then
+        actions+=("update:global cache (pull latest)")
+    else
+        actions+=("clone:global cache")
+    fi
+    
+    # Check .superpowers directory
+    if [ -L ".superpowers" ]; then
+        local target=$(readlink ".superpowers")
+        if [ "$target" = "$INSTALL_DIR" ]; then
+            actions+=("skip:symlink (already correct)")
+        else
+            actions+=("replace:existing symlink with correct target")
+            conflicts+=(".superpowers (wrong target: $target)")
+        fi
+    elif [ -d ".superpowers" ]; then
+        conflicts+=(".superpowers (will back up to .superpowers.old)")
+        actions+=("create:symlink")
+    else
+        actions+=("create:symlink")
+    fi
+    
+    # Check instructions file
+    if [ -f "$INSTRUCTIONS_FILE" ]; then
+        if grep -Fq "$START_TAG" "$INSTRUCTIONS_FILE"; then
+            actions+=("update:instructions file (in-place)")
+        else
+            conflicts+=("$INSTRUCTIONS_FILE (unmanaged - will back up to .old)")
+            actions+=("create:new instructions file")
+        fi
+    else
+        actions+=("create:new instructions file")
+    fi
+    
+    # Print formatted output
+    echo "📋 PREVIEW: Superpowers Installation Plan"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    echo "📦 GLOBAL CACHE & SYMLINK"
+    echo "  Cache Location: $INSTALL_DIR"
+    echo "  Workspace Link: ./.superpowers"
+    echo "  Target: $INSTALL_DIR"
+    echo ""
+    
+    for action in "${actions[@]}"; do
+        IFS=':' read -r type desc <<< "$action"
+        case "$type" in
+            clone)   echo "  ⬇️  Clone: $desc" ;;
+            update)  echo "  🔄 Update: $desc" ;;
+            create)  echo "  ✨ Create: $desc" ;;
+            replace) echo "  🔃 Replace: $desc" ;;
+            skip)    echo "  ⏭️  Skip: $desc" ;;
+        esac
+    done
+    
+    echo ""
+    echo "📝 INSTRUCTIONS & PROMPTS"
+    echo "  Instructions: ./.github/copilot-instructions.md"
+    echo "  Path updates: Use ./.superpowers/skills/ instead of ~/.cache/"
+    echo "  Prompts Dir: ./.github/prompts/"
+    echo "  Skills: ${#SKILLS_TO_INSTALL[@]} slash commands"
+    echo ""
+    
+    if [ ${#conflicts[@]} -gt 0 ]; then
+        echo "⚠️  CONFLICTS DETECTED"
+        for conflict in "${conflicts[@]}"; do
+            echo "  • $conflict"
+        done
+        echo ""
+    fi
+    
+    echo "💾 DISK IMPACT"
+    echo "  Global cache: ~5-10 MB (shared across workspaces)"
+    echo "  Workspace: ~1 MB (.superpowers is symlink, negligible)"
+    echo ""
+}
+
+# --- PREVIEW PHASE ---
+detect_conflicts
+
+# Ask for confirmation
+echo "ℹ️  To learn more about symlink-based installation,"
+echo "   see docs/plans/2026-02-08-symlink-installer-design.md"
+echo ""
+echo -n "✅ Proceed with installation? (Y/n): "
+read -r response
+if [[ ! "$response" =~ ^[Yy]$ ]] && [ -n "$response" ]; then
+    echo "cancelled."
+    exit 0
+fi
+
+echo ""
+echo "🔨 EXECUTING INSTALLATION..."
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
 
 # 1. UPDATE SOURCE OF TRUTH
 if [ -d "$INSTALL_DIR" ]; then
@@ -162,5 +267,15 @@ EOF
     fi
 done
 
+echo ""
+echo "✅ INSTALLATION COMPLETE"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "✨ Files installed"
+echo "   ./.github/copilot-instructions.md"
+echo "   ./.github/prompts/*.prompt.md (14 skills)"
+echo ""
+echo "👉 NEXT STEP: Reload VS Code"
+echo "   Command Palette → \"Developer: Reload Window\""
+echo ""
 echo "🎉 Done! Superpowers is active."
-echo "👉 Reload VS Code (Developer: Reload Window) to refresh the slash commands."
