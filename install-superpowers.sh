@@ -2,13 +2,21 @@
 set -e
 
 # ==============================================================================
-# 🦸 SUPERPOWERS FOR VS CODE - INSTALLER & UPDATER
+# 🦸 SUPERPOWERS FOR VS CODE - INSTALLER & UPDATER (v2)
 # ==============================================================================
 # This script installs the Superpowers "operating system" for GitHub Copilot.
-# It clones the source repository to a local cache and injects the necessary
-# instructions and prompt files into your current workspace's .github/ folder.
 #
-# It is IDEMPOTENT: Run it as often as you like to update to the latest version.
+# WORKFLOW:
+# 1. Shows preview of what will be installed (with explicit confirmation)
+# 2. Clones/updates Superpowers cache to ~/.cache/superpowers (shared across workspaces)
+# 3. Creates symlink: ./.superpowers → ~/.cache/superpowers (workspace-resident)
+# 4. Updates .github/copilot-instructions.md with paths using ./.superpowers/skills/
+# 5. Copies skill definitions to .github/prompts/ for VS Code slash commands
+#
+# KEY BENEFIT: All skill access is workspace-local, eliminating permission prompts
+#
+# IDEMPOTENT: Run it as often as you like to update to the latest version.
+# REVERSIBLE: Remove .superpowers symlink and restore .superpowers.old if needed.
 # ==============================================================================
 
 # --- CONFIGURATION ---
@@ -26,16 +34,159 @@ PROMPTS_DIR="$TARGET_DIR/prompts"
 # We rename 'writing-plans' -> 'write-plan' to avoid VS Code's reserved /plan
 # We rename 'systematic-debugging' -> 'investigate' to avoid VS Code's reserved /fix
 SKILLS_TO_INSTALL=(
+    # Core workflow
     "writing-plans:write-plan:Create a detailed implementation plan (Superpowers)"
-    "systematic-debugging:investigate:Perform systematic root-cause analysis"
+    "executing-plans:execute-plan:Execute an implementation plan with checkpoints"
+    "brainstorming:brainstorm:Generate creative solutions and explore ideas"
+    
+    # Testing & Debugging
     "test-driven-development:tdd:Implement code using strict TDD cycles"
-    "using-superpowers:superpowers:Explanation of the Superpowers capabilities"
-    "brainstorming:brainstorm:Generate creative solutions"
+    "systematic-debugging:investigate:Perform systematic root-cause analysis"
+    "verification-before-completion:verify:Ensure fixes work before claiming success"
+    
+    # Git Workflows
+    "using-git-worktrees:worktree:Create isolated workspace for parallel development"
+    "finishing-a-development-branch:finish-branch:Merge, PR, or discard completed work"
+    
+    # Code Review
     "requesting-code-review:review:Request a self-correction code review"
+    "receiving-code-review:receive-review:Respond to code review feedback"
+    
+    # Advanced Development
+    "subagent-driven-development:subagent-dev:Dispatch subagents for task-by-task development"
+    "dispatching-parallel-agents:dispatch-agents:Run concurrent subagent workflows"
+    
+    # Meta
+    "writing-skills:write-skill:Create new skills following TDD best practices"
+    "using-superpowers:superpowers:Learn about the Superpowers capabilities"
 )
 
 echo "🦸 Superpowers Installer & Updater"
 echo "=================================="
+echo ""
+
+# --- HELPER FUNCTIONS ---
+
+# Detect what conflicts/actions will happen
+detect_conflicts() {
+    local conflicts=()
+    local actions=()
+    
+    # Check global cache status
+    if [ -d "$INSTALL_DIR" ]; then
+        actions+=("update:global cache (pull latest)")
+    else
+        actions+=("clone:global cache")
+    fi
+    
+    # Check .superpowers directory
+    if [ -L ".superpowers" ]; then
+        local target=$(readlink ".superpowers")
+        if [ "$target" = "$INSTALL_DIR" ]; then
+            actions+=("skip:symlink (already correct)")
+        else
+            actions+=("replace:existing symlink with correct target")
+            conflicts+=(".superpowers (wrong target: $target)")
+        fi
+    elif [ -d ".superpowers" ]; then
+        conflicts+=(".superpowers (will back up to .superpowers.old)")
+        actions+=("create:symlink")
+    else
+        actions+=("create:symlink")
+    fi
+    
+    # Check instructions file
+    if [ -f "$INSTRUCTIONS_FILE" ]; then
+        if grep -Fq "$START_TAG" "$INSTRUCTIONS_FILE"; then
+            actions+=("update:instructions file (in-place)")
+        else
+            conflicts+=("$INSTRUCTIONS_FILE (unmanaged - will back up to .old)")
+            actions+=("create:new instructions file")
+        fi
+    else
+        actions+=("create:new instructions file")
+    fi
+    
+    # Print formatted output
+    echo "📋 PREVIEW: Superpowers Installation Plan"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    echo "📦 GLOBAL CACHE & SYMLINK"
+    echo "  Cache Location: $INSTALL_DIR"
+    echo "  Workspace Link: ./.superpowers"
+    echo "  Target: $INSTALL_DIR"
+    echo ""
+    
+    for action in "${actions[@]}"; do
+        IFS=':' read -r type desc <<< "$action"
+        case "$type" in
+            clone)   echo "  ⬇️  Clone: $desc" ;;
+            update)  echo "  🔄 Update: $desc" ;;
+            create)  echo "  ✨ Create: $desc" ;;
+            replace) echo "  🔃 Replace: $desc" ;;
+            skip)    echo "  ⏭️  Skip: $desc" ;;
+        esac
+    done
+    
+    echo ""
+    echo "📝 INSTRUCTIONS & PROMPTS"
+    echo "  Instructions: ./.github/copilot-instructions.md"
+    echo "  Path updates: Use ./.superpowers/skills/ instead of ~/.cache/"
+    echo "  Prompts Dir: ./.github/prompts/"
+    echo "  Skills: ${#SKILLS_TO_INSTALL[@]} slash commands"
+    echo ""
+    
+    if [ ${#conflicts[@]} -gt 0 ]; then
+        echo "⚠️  CONFLICTS DETECTED"
+        for conflict in "${conflicts[@]}"; do
+            echo "  • $conflict"
+        done
+        echo ""
+    fi
+    
+    echo "💾 DISK IMPACT"
+    echo "  Global cache: ~5-10 MB (shared across workspaces)"
+    echo "  Workspace: ~1 MB (.superpowers is symlink, negligible)"
+    echo ""
+}
+
+# --- PREVIEW PHASE ---
+detect_conflicts
+
+# Ask for confirmation
+echo "ℹ️  To learn more about symlink-based installation,"
+echo "   see docs/plans/2026-02-08-symlink-installer-design.md"
+echo ""
+echo -n "✅ Proceed with installation? (Y/n): "
+read -r response
+if [[ ! "$response" =~ ^[Yy]$ ]] && [ -n "$response" ]; then
+    echo "cancelled."
+    exit 0
+fi
+
+echo ""
+echo "🔨 EXECUTING INSTALLATION..."
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+
+# 0. DETECT & ADAPT - Handle existing .superpowers directory
+if [ -L ".superpowers" ]; then
+    # It's a symlink
+    target=$(readlink ".superpowers")
+    if [ "$target" = "$INSTALL_DIR" ]; then
+        echo "✓ .superpowers symlink already correct (skipping)"
+    else
+        echo "🔃 Removing .superpowers symlink (points to: $target)"
+        rm ".superpowers"
+    fi
+elif [ -d ".superpowers" ]; then
+    # It's a regular directory
+    echo "📦 Backing up existing .superpowers to .superpowers.old..."
+    if [ -d ".superpowers.old" ]; then
+        rm -rf ".superpowers.old"
+    fi
+    mv ".superpowers" ".superpowers.old"
+fi
 
 # 1. UPDATE SOURCE OF TRUTH
 if [ -d "$INSTALL_DIR" ]; then
@@ -44,6 +195,19 @@ if [ -d "$INSTALL_DIR" ]; then
 else
     echo "⬇️  Cloning Superpowers to $INSTALL_DIR..."
     git clone -q "$REPO_URL" "$INSTALL_DIR"
+fi
+
+# 1.5 CREATE SYMLINK - Now that cache is ready
+echo "🔗 Creating workspace symlink..."
+if [ ! -e ".superpowers" ] && [ ! -L ".superpowers" ]; then
+    ln -s "$INSTALL_DIR" ".superpowers"
+    if [ ! -L ".superpowers" ]; then
+        echo "❌ Error: Failed to create symlink"
+        exit 1
+    fi
+    echo "✓ Symlink created: ./.superpowers → $INSTALL_DIR"
+else
+    echo "✓ Symlink ready: ./.superpowers → $INSTALL_DIR"
 fi
 
 # 2. PREPARE THE KERNEL (THE SYSTEM PROMPT)
@@ -58,6 +222,7 @@ END_TAG="<!-- SUPERPOWERS-END -->"
 
 # We dynamically generate the 'Kernel' text to reference our NEW command names
 # instead of the defaults found in the raw markdown.
+# NOTE: Using workspace-relative paths to avoid permission prompts
 KERNEL_CONTENT=$(cat <<EOF
 # SUPERPOWERS PROTOCOL
 You are an autonomous coding agent operating on a strict "Loop of Autonomy."
@@ -79,6 +244,11 @@ VS Code reserved commands are replaced with these Superpowers equivalents:
 ## RULES
 - If \`plan.md\` does not exist, your ONLY valid action is to ask to run \`/write-plan\`.
 - Do not guess. If stuck, write a theory in \`scratchpad.md\`.
+
+## AVAILABLE SKILLS
+
+All skill definitions are available at \`./.superpowers/skills/\` (workspace-resident).
+This path keeps all Superpowers content within your workspace, preventing permission prompts.
 EOF
 )
 
@@ -143,5 +313,25 @@ EOF
     fi
 done
 
+echo ""
+echo "✅ INSTALLATION COMPLETE"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "🔗 Symlink created"
+echo "   ./.superpowers → $INSTALL_DIR"
+echo ""
+echo "📝 Instructions updated"
+echo "   ./.github/copilot-instructions.md (uses ./.superpowers/skills/)"
+echo ""
+echo "🛠️  Skills installed (14 slash commands)"
+for skill_def in "${SKILLS_TO_INSTALL[@]}"; do
+    IFS=':' read -r src_folder cmd_name description <<< "$skill_def"
+    echo "   ✓ /$cmd_name"
+done
+echo ""
+echo "👉 NEXT STEP: Reload VS Code"
+echo "   Command Palette → \"Developer: Reload Window\""
+echo ""
+echo "💡 NOTE: No permission prompts - skills are workspace-resident via symlink"
+echo ""
 echo "🎉 Done! Superpowers is active."
-echo "👉 Reload VS Code (Developer: Reload Window) to refresh the slash commands."
