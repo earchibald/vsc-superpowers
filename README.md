@@ -60,7 +60,11 @@ All 14 Superpowers skills are available as slash commands:
 - `/write-skill` - Create new skills
 - `/superpowers` - Learn the system
 
-See [docs/SKILLS_REFERENCE.md](docs/SKILLS_REFERENCE.md) for detailed descriptions.
+### 📖 Quick Reference
+
+**Start here:** [docs/CHEATSHEET.md](docs/CHEATSHEET.md) - Quick one-liners for all 14 skills, workflow diagrams, and decision trees. Perfect for learning workflows and remembering what skill to use.
+
+**Deep dive:** [docs/SKILLS_REFERENCE.md](docs/SKILLS_REFERENCE.md) - Detailed descriptions of each skill with examples and anti-patterns.
 
 ## Command Mapping
 

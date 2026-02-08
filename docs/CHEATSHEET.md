@@ -4,6 +4,24 @@ Quick reference guide for all 14 Superpowers skills with one-liners, detailed de
 
 ---
 
+## Table of Contents
+
+### Skills by Category
+- [🎯 Core Workflow](#-core-workflow) - `/brainstorm`, `/write-plan`, `/execute-plan`
+- [🧪 Testing & Debugging](#-testing--debugging) - `/tdd`, `/investigate`, `/verify`
+- [🌳 Git Workflows](#-git-workflows) - `/worktree`, `/finish-branch`
+- [📝 Code Review](#-code-review) - `/review`, `/receive-review`
+- [⚡ Advanced Development](#-advanced-development) - `/subagent-dev`, `/dispatch-agents`
+- [🛠️ Meta](#️-meta) - `/write-skill`, `/superpowers`
+
+### Reference Sections
+- [Workflow Diagrams](#workflow-diagrams) - Visual guides for common development patterns
+- [Skill Priority by Situation](#skill-priority-in-situations) - Which skills to use when
+- [Decision Tree](#quick-decision-tree-which-skill-do-i-need) - Choose the right skill
+- [Daily Workflows](#running-superpowers-daily) - Morning, development, debugging, shipping patterns
+
+---
+
 ## The 14 Skills
 
 ### 🎯 Core Workflow
