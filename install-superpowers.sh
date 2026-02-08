@@ -26,12 +26,31 @@ PROMPTS_DIR="$TARGET_DIR/prompts"
 # We rename 'writing-plans' -> 'write-plan' to avoid VS Code's reserved /plan
 # We rename 'systematic-debugging' -> 'investigate' to avoid VS Code's reserved /fix
 SKILLS_TO_INSTALL=(
+    # Core workflow
     "writing-plans:write-plan:Create a detailed implementation plan (Superpowers)"
-    "systematic-debugging:investigate:Perform systematic root-cause analysis"
+    "executing-plans:execute-plan:Execute an implementation plan with checkpoints"
+    "brainstorming:brainstorm:Generate creative solutions and explore ideas"
+    
+    # Testing & Debugging
     "test-driven-development:tdd:Implement code using strict TDD cycles"
-    "using-superpowers:superpowers:Explanation of the Superpowers capabilities"
-    "brainstorming:brainstorm:Generate creative solutions"
+    "systematic-debugging:investigate:Perform systematic root-cause analysis"
+    "verification-before-completion:verify:Ensure fixes work before claiming success"
+    
+    # Git Workflows
+    "using-git-worktrees:worktree:Create isolated workspace for parallel development"
+    "finishing-a-development-branch:finish-branch:Merge, PR, or discard completed work"
+    
+    # Code Review
     "requesting-code-review:review:Request a self-correction code review"
+    "receiving-code-review:receive-review:Respond to code review feedback"
+    
+    # Advanced Development
+    "subagent-driven-development:subagent-dev:Dispatch subagents for task-by-task development"
+    "dispatching-parallel-agents:dispatch-agents:Run concurrent subagent workflows"
+    
+    # Meta
+    "writing-skills:write-skill:Create new skills following TDD best practices"
+    "using-superpowers:superpowers:Learn about the Superpowers capabilities"
 )
 
 echo "🦸 Superpowers Installer & Updater"
