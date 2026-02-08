@@ -122,6 +122,26 @@ rm -rf .github/prompts/
 
 The installer is idempotent - run it anytime to update to the latest version.
 
+## Economics: Superpowers for Cost-Effective VS Code Copilot
+
+VS Code Copilot's per-request billing model (each slash command invocation = 1 credit) contrasts sharply with token-based pricing in other platforms. Superpowers transforms this into an advantage.
+
+**The Economics:**
+
+- **Without Superpowers**: Frequent context-switching between small prompts → many requests → higher costs
+- **With Superpowers**: Fewer, larger batches (`/write-plan`, `/tdd`, `/subagent-dev`) → fewer requests → lower cost per unit of work
+
+Example: A typical feature implementation:
+- **Ad-hoc approach**: `/write-plan` (1 credit) → `/tdd` per-task (5 credits) → `/review` (1 credit) → debugging (`/investigate` 2-3 credits) = ~9 credits
+- **Superpowers approach**: `/write-plan` (1 credit) → `/subagent-dev` per task batch (2-3 credits, handling multiple tasks) → `/verify` (1 credit) = ~4-5 credits
+
+**The quality gain:** While reducing requests, Superpowers *increases* output fidelity through:
+- Sustained context across long-running prompts
+- Systematic workflows (TDD, debugging, planning) that prevent rework
+- Batch processing that clusters related tasks together
+
+**Result:** You get better code, lower costs, and maintain the high-fidelity output quality that makes Superpowers valuable, all while being pragmatic about per-request billing.
+
 ## Philosophy
 
 - **Test-Driven Development** - Write tests first, always
