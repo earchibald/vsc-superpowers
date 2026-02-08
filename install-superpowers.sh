@@ -161,6 +161,25 @@ echo "🔨 EXECUTING INSTALLATION..."
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
+# 0. DETECT & ADAPT - Handle existing .superpowers directory
+if [ -L ".superpowers" ]; then
+    # It's a symlink
+    target=$(readlink ".superpowers")
+    if [ "$target" = "$INSTALL_DIR" ]; then
+        echo "✓ .superpowers symlink already correct (skipping)"
+    else
+        echo "🔃 Removing .superpowers symlink (points to: $target)"
+        rm ".superpowers"
+    fi
+elif [ -d ".superpowers" ]; then
+    # It's a regular directory
+    echo "📦 Backing up existing .superpowers to .superpowers.old..."
+    if [ -d ".superpowers.old" ]; then
+        rm -rf ".superpowers.old"
+    fi
+    mv ".superpowers" ".superpowers.old"
+fi
+
 # 1. UPDATE SOURCE OF TRUTH
 if [ -d "$INSTALL_DIR" ]; then
     echo "🔄 Updating Superpowers cache at $INSTALL_DIR..."
@@ -168,6 +187,19 @@ if [ -d "$INSTALL_DIR" ]; then
 else
     echo "⬇️  Cloning Superpowers to $INSTALL_DIR..."
     git clone -q "$REPO_URL" "$INSTALL_DIR"
+fi
+
+# 1.5 CREATE SYMLINK - Now that cache is ready
+echo "🔗 Creating workspace symlink..."
+if [ ! -e ".superpowers" ] && [ ! -L ".superpowers" ]; then
+    ln -s "$INSTALL_DIR" ".superpowers"
+    if [ ! -L ".superpowers" ]; then
+        echo "❌ Error: Failed to create symlink"
+        exit 1
+    fi
+    echo "✓ Symlink created: ./.superpowers → $INSTALL_DIR"
+else
+    echo "✓ Symlink ready: ./.superpowers → $INSTALL_DIR"
 fi
 
 # 2. PREPARE THE KERNEL (THE SYSTEM PROMPT)
@@ -182,6 +214,7 @@ END_TAG="<!-- SUPERPOWERS-END -->"
 
 # We dynamically generate the 'Kernel' text to reference our NEW command names
 # instead of the defaults found in the raw markdown.
+# NOTE: Using workspace-relative paths to avoid permission prompts
 KERNEL_CONTENT=$(cat <<EOF
 # SUPERPOWERS PROTOCOL
 You are an autonomous coding agent operating on a strict "Loop of Autonomy."
@@ -203,6 +236,11 @@ VS Code reserved commands are replaced with these Superpowers equivalents:
 ## RULES
 - If \`plan.md\` does not exist, your ONLY valid action is to ask to run \`/write-plan\`.
 - Do not guess. If stuck, write a theory in \`scratchpad.md\`.
+
+## AVAILABLE SKILLS
+
+All skill definitions are available at \`./.superpowers/skills/\` (workspace-resident).
+This path keeps all Superpowers content within your workspace, preventing permission prompts.
 EOF
 )
 
