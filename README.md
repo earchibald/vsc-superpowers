@@ -6,6 +6,23 @@ An implementation of the [Superpowers](https://github.com/obra/superpowers) fram
 
 Superpowers is a complete software development workflow for coding agents, built on a set of composable "skills" that enforce best practices like TDD, systematic debugging, and comprehensive planning.
 
+---
+
+## 🙏 Credit & Support
+
+**This project exists because of [Jesse Vincent (@obra)](https://github.com/obra) and the incredible [Superpowers](https://github.com/obra/superpowers) framework.**
+
+Jesse created a paradigm-shifting approach to agent-driven development—systematic, principled, and focused on evidence over assumptions. This VS Code implementation is built entirely on that foundation.
+
+**If you find Superpowers valuable:**
+- ⭐ **Star the original** [Superpowers repository](https://github.com/obra/superpowers)
+- 📖 **Read the original** [Superpowers project](https://github.com/obra/superpowers) for the complete vision
+- 🙌 **Support Jesse's work** - follow [@obra](https://github.com/obra) and contribute to the original project
+
+The Superpowers approach transforms how we think about code quality, testing, and agent collaboration. Thank you, Jesse, for creating something that genuinely improves how we build software.
+
+---
+
 ## Installation
 
 ```bash
