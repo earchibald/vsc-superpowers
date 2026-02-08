@@ -1,0 +1,20 @@
+graph TD
+    A["🧠 Brainstorm Ideas"] -->|Generate concepts| B["📋 Plan Implementation"]
+    B -->|Create checkpoints| C["/write-plan command"]
+    C -->|Structured plan| D["⚙️ Execute Plan"]
+    D -->|With checkpoints| E["/execute-plan command"]
+    E -->|Code changes| F["✅ Verify Fix"]
+    F -->|Validation check| G["/verify command"]
+    G -->|Success| H["🎯 Feature Complete"]
+    G -->|Issues| I["🔍 Investigate"]
+    I -->|Debug cycle| B
+    
+    style A fill:#e1f5ff
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
+    style D fill:#e8f5e9
+    style E fill:#c8e6c9
+    style F fill:#fff9c4
+    style G fill:#ffe0b2
+    style H fill:#81c784
+    style I fill:#ffccbc

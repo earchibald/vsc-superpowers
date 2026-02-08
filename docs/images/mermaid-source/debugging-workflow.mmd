@@ -1,0 +1,24 @@
+graph TD
+    A["🐛 Bug or Issue Found"] -->|Start investigation| B["/investigate command"]
+    B -->|Systematic 4-phase| C["Phase 1: Understand"]
+    C -->|Gather context| D["Phase 2: Hypothesize"]
+    D -->|Form theory| E["Phase 3: Test"]
+    E -->|RED-GREEN-REFACTOR| F["/tdd command"]
+    F -->|Write tests| G["Phase 4: Fix"]
+    G -->|Implement solution| H["✅ Verify Fix"]
+    H -->|Validation| I["/verify command"]
+    I -->|Success| J["🎯 Bug Fixed"]
+    I -->|Not resolved| K["🔄 Loop Back"]
+    K -->|Refine understanding| D
+    
+    style A fill:#ffebee
+    style B fill:#ffe0b2
+    style C fill:#e1f5ff
+    style D fill:#f3e5f5
+    style E fill:#fff3e0
+    style F fill:#e8f5e9
+    style G fill:#fff9c4
+    style H fill:#ffe0b2
+    style I fill:#fff9c4
+    style J fill:#81c784
+    style K fill:#ffccbc

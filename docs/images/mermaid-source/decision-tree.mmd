@@ -1,0 +1,35 @@
+graph TD
+    A["🤔 What do you need to do?"] --> B{Need to explore ideas?}
+    B -->|Yes| C["/brainstorm command"]
+    C -->|Socratic dialogue| D["Generate multiple approaches"]
+    B -->|No| E{Have a plan?}
+    E -->|Need one| F["/write-plan command"]
+    F -->|Structured plan| G["Ready to implement"]
+    E -->|Already have| G
+    G --> H{What's next?}
+    H -->|Execute plan| I["/execute-plan command"]
+    I -->|Implement with checkpoints| J["Code changes complete"]
+    H -->|Debug issue| K["/investigate command"]
+    K -->|Troubleshoot| L["Find root cause"]
+    H -->|Multiple tasks| M["/dispatch-agents command"]
+    M -->|Parallel execution| N["Spawn /subagent-dev flows"]
+    J --> O{Done?}
+    O -->|Review code| P["/review command"]
+    P -->|Self-review| Q["Submit for feedback"]
+    O -->|Fix bugs| K
+    Q --> R["/receive-review command"]
+    R -->|Handle feedback| S["Revise code"]
+    S --> O
+    O -->|Yes, complete| T["✅ Finish with /finish-branch"]
+    
+    style A fill:#e1f5ff
+    style C fill:#e1f5ff
+    style F fill:#fff3e0
+    style I fill:#e8f5e9
+    style K fill:#ffe0b2
+    style M fill:#f3e5f5
+    style N fill:#f3e5f5
+    style P fill:#c8e6c9
+    style Q fill:#c8e6c9
+    style R fill:#c8e6c9
+    style T fill:#81c784

@@ -1,0 +1,35 @@
+graph TD
+    A["📋 GitHub Issue"] --> B{Issue Type?}
+    B -->|Feature Request| C["/write-plan command"]
+    C -->|Create detailed plan| D["/execute-plan command"]
+    D -->|Implement feature| E["Create commits"]
+    E --> F["/review command"]
+    F -->|Self-review| G["Code quality check"]
+    G --> H["Ready for PR"]
+    H --> I["/finish-branch command"]
+    I -->|Create PR| J["Code review feedback"]
+    J --> K["/receive-review command"]
+    K -->|Handle feedback| L["Revise implementation"]
+    L --> F
+    B -->|Bug/Defect| M["/investigate command"]
+    M -->|Systematic debugging| N["Root cause found"]
+    N --> O["/tdd command"]
+    O -->|Test-driven fix| P["Implement fix"]
+    P --> Q["/verify command"]
+    Q -->|Validate solution| R{"Fix verified?"}
+    R -->|Yes| S["/review command"]
+    R -->|No| M
+    S -->|Self-review| T["Ready for PR"]
+    T --> U["/finish-branch command"]
+    U -->|Create PR| V["Submit fix"]
+    
+    style A fill:#e3f2fd
+    style C fill:#fff3e0
+    style D fill:#e8f5e9
+    style F fill:#c8e6c9
+    style M fill:#ffe0b2
+    style O fill:#fff9c4
+    style Q fill:#ffe0b2
+    style S fill:#c8e6c9
+    style U fill:#f3e5f5
+    style V fill:#81c784

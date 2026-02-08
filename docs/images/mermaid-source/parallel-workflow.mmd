@@ -1,0 +1,44 @@
+graph TD
+    A["📋 Multiple Independent Tasks"] --> B["/dispatch-agents command"]
+    B -->|Spawn parallel workflows| C["🎯 Task 1"]
+    B -->|Spawn parallel workflows| D["🎯 Task 2"]
+    B -->|Spawn parallel workflows| E["🎯 Task 3"]
+    B -->|Spawn parallel workflows| F["🎯 Task N"]
+    
+    C --> G["/subagent-dev Task 1"]
+    G -->|Plan & Execute| H["Task 1: /write-plan"]
+    H -->|Task 1: /execute-plan| I["Task 1 Implementation"]
+    I -->|Task 1: /verify| J["Task 1: ✅ Complete"]
+    
+    D --> K["/subagent-dev Task 2"]
+    K -->|Plan & Execute| L["Task 2: /write-plan"]
+    L -->|Task 2: /execute-plan| M["Task 2 Implementation"]
+    M -->|Task 2: /verify| N["Task 2: ✅ Complete"]
+    
+    E --> O["/subagent-dev Task 3"]
+    O -->|Plan & Execute| P["Task 3: /write-plan"]
+    P -->|Task 3: /execute-plan| Q["Task 3 Implementation"]
+    Q -->|Task 3: /verify| R["Task 3: ✅ Complete"]
+    
+    F --> S["/subagent-dev Task N"]
+    S -->|Plan & Execute| T["Task N: /write-plan"]
+    T -->|Task N: /execute-plan| U["Task N Implementation"]
+    U -->|Task N: /verify| V["Task N: ✅ Complete"]
+    
+    J --> W["🔄 Consolidate Results"]
+    N --> W
+    R --> W
+    V --> W
+    W --> X["✅ All Tasks Complete"]
+    
+    style A fill:#e1f5ff
+    style B fill:#f3e5f5
+    style C fill:#e8f5e9
+    style D fill:#e8f5e9
+    style E fill:#e8f5e9
+    style F fill:#e8f5e9
+    style J fill:#81c784
+    style N fill:#81c784
+    style R fill:#81c784
+    style V fill:#81c784
+    style X fill:#4caf50

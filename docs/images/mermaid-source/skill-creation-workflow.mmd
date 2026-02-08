@@ -1,0 +1,46 @@
+graph TD
+    A["💡 New Skill Idea"] --> B["/brainstorm command"]
+    B -->|Explore design| C["Define skill scope"]
+    C --> D["Plan implementation"]
+    D --> E["/write-skill command"]
+    E -->|Create skill scaffold| F["Generate files"]
+    F --> G["📝 Write Implementation"]
+    G -->|Code the skill| H["Create main handler"]
+    H --> I["Add helper functions"]
+    I --> J["📚 Write Documentation"]
+    J -->|Document usage| K["Add README"]
+    K --> L["Add examples"]
+    L --> M["Add parameters"]
+    M --> N["/write-plan command"]
+    N -->|Plan tests| O["/tdd command"]
+    O -->|Test-driven| P["Write unit tests"]
+    P --> Q["Implement test cases"]
+    Q --> R["Run all tests"]
+    R --> S{Tests Pass?}
+    S -->|No| T["🔧 Fix Implementation"]
+    T --> R
+    S -->|Yes| U["/verify command"]
+    U -->|Validation| V["Manual testing"]
+    V --> W["Edge case testing"]
+    W --> X{Verified?}
+    X -->|No| T
+    X -->|Yes| Y["/review command"]
+    Y -->|Self-review| Z["Code quality"]
+    Z --> AA["Documentation quality"]
+    AA --> AB{Ready?}
+    AB -->|No| AC["Refine"]
+    AC --> Y
+    AB -->|Yes| AD["✅ Skill Complete"]
+    AD --> AE["Publish to Skills Library"]
+    
+    style A fill:#e1f5ff
+    style B fill:#e1f5ff
+    style E fill:#f3e5f5
+    style G fill:#e8f5e9
+    style J fill:#fff3e0
+    style N fill:#fff3e0
+    style O fill:#fff9c4
+    style U fill:#ffe0b2
+    style Y fill:#c8e6c9
+    style AD fill:#81c784
+    style AE fill:#4caf50

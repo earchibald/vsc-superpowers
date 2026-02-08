@@ -1,0 +1,37 @@
+graph TD
+    A["📝 Code Complete"] --> B["/review command"]
+    B -->|Self-review mode| C["Compare to Plan"]
+    C -->|Check alignment| D{Plan Adherence OK?}
+    D -->|No| E["🔧 Refactor Code"]
+    E --> C
+    D -->|Yes| F["Check Code Quality"]
+    F -->|Style & structure| G{Quality OK?}
+    G -->|No| H["Refine Implementation"]
+    H --> C
+    G -->|Yes| I["📤 Submit PR"]
+    I --> J["Awaiting Review Feedback"]
+    J --> K["/receive-review command"]
+    K -->|Review received| L["📋 Read Comments"]
+    L --> M{Change Type?}
+    M -->|Approve| N["✅ Ready to Merge"]
+    M -->|Changes requested| O["🔄 Implement Changes"]
+    O --> P["Update commits"]
+    P --> Q["Re-request review"]
+    Q --> K
+    M -->|Comment/question| R["📞 Clarify with Reviewer"]
+    R --> M
+    N --> S["Merge to Main"]
+    
+    style A fill:#e1f5ff
+    style B fill:#e8f5e9
+    style C fill:#fff3e0
+    style D fill:#fff9c4
+    style E fill:#ffccbc
+    style F fill:#fff9c4
+    style G fill:#fff9c4
+    style H fill:#ffccbc
+    style I fill:#c8e6c9
+    style K fill:#f3e5f5
+    style L fill:#fff3e0
+    style N fill:#81c784
+    style S fill:#4caf50
