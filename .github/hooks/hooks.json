@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/github/copilot-cli/main/schemas/hooks.schema.json",
+  "hooks": {
+    "sessionStart": {
+      "description": "Bootstrap Superpowers cache and display activation banner",
+      "command": "bash",
+      "args": [".github/hooks/scripts/session-start.sh"]
+    },
+    "preToolUse": {
+      "description": "Enforce Iron Law of Verification before dangerous commands",
+      "command": "bash",
+      "args": [".github/hooks/scripts/pre-command.sh"],
+      "tools": ["bash"]
+    }
+  }
+}
