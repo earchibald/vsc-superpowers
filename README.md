@@ -35,18 +35,25 @@ The Superpowers approach transforms how we think about code quality, testing, an
 
 ### Option 1: VS Code Copilot Chat (Natural Language + Slash Commands)
 
+**Per-Workspace Installation:** Superpowers installs into each workspace separately because it relies on workspace-specific `.github/copilot-instructions.md` that VS Code Copilot reads.
+
 ```bash
-# One-line install
+# One-line install (run from your workspace root)
+cd /path/to/your/project
 curl -fsSL https://raw.githubusercontent.com/earchibald/vsc-superpowers/main/install-superpowers.sh | bash
 
-# Or clone and run manually
-git clone https://github.com/earchibald/vsc-superpowers.git
-cd vsc-superpowers
+# Or clone installer to your workspace and run
+cd /path/to/your/project
+git clone https://github.com/earchibald/vsc-superpowers.git .superpowers-installer
+cd .superpowers-installer
 ./install-superpowers.sh
+cd ..
 
 # Reload VS Code to activate
 # Command Palette > Developer: Reload Window
 ```
+
+**Why per-workspace?** VS Code Copilot reads `.github/copilot-instructions.md` from your workspace root. Each project needs its own Superpowers installation to get the framework behaviors.
 
 ### Option 2: Copilot CLI Plugin
 
@@ -66,16 +73,18 @@ copilot plugin add https://github.com/earchibald/vsc-superpowers
 
 ### How VS Code Installation Works
 
-The installer uses a **workspace-resident symlink approach** to prevent permission prompts:
+The installer uses a **per-workspace installation** approach with shared cache:
 
-1. **Preview Phase**: Shows what will be installed and asks for confirmation
-2. **Global Cache**: Clones Superpowers to `~/.cache/superpowers` (shared across workspaces)
-3. **Workspace Symlink**: Creates `./.superpowers → ~/.cache/superpowers` (workspace-local)
-4. **Instructions File**: Creates `.github/copilot-instructions.md` with Superpowers framework protocol
-5. **Path Updates**: Instructions reference `./.superpowers/skills/` (no absolute paths)
-6. **Prompts**: Copies skill definitions to `.github/prompts/` for slash commands
+1. **Preview Phase**: Shows what will be installed in your workspace and asks for confirmation
+2. **Global Cache**: Clones Superpowers to `~/.cache/superpowers` (shared across all your workspaces)
+3. **Workspace Symlink**: Creates `./.superpowers → ~/.cache/superpowers` in your workspace
+4. **Instructions File**: Creates `.github/copilot-instructions.md` with Superpowers framework protocol **in your workspace**
+5. **Path Updates**: Instructions reference `./.superpowers/skills/` (workspace-relative paths)
+6. **Prompts**: Copies skill definitions to `.github/prompts/` **in your workspace**
 
-**Result:** Copilot reads framework instructions from `.github/copilot-instructions.md` and **infers patterns naturally**. Slash commands in `.github/prompts/` available for explicit invocation. All paths workspace-local, **eliminating permission prompts**.
+**Result:** Copilot reads framework instructions from **your workspace's** `.github/copilot-instructions.md` and **infers patterns naturally**. Slash commands in `.github/prompts/` available for explicit invocation. All paths workspace-relative, **eliminating permission prompts**.
+
+**Cache Efficiency:** Multiple workspaces share `~/.cache/superpowers`, so you only download Superpowers once. Each workspace gets its own `.github/` configuration but references the shared cache.
 
 ## Available Skills (14 Total)
 
