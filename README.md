@@ -8,11 +8,11 @@ Superpowers is a complete software development workflow for coding agents, built
 
 ## Two Ways to Use
 
-**VS Code Copilot Chat** - Slash commands (`/write-plan`, `/tdd`, etc.) integrated directly into VS Code via `.github/prompts/`
+**VS Code Copilot Chat** - Natural language interface that infers framework patterns from context. Slash commands (`/write-plan`, `/tdd`, etc.) also available for explicit invocation.
 
 **Copilot CLI Plugin** - Natural language or direct skill invocation in terminal via `.agents/` plugin architecture with auto-bootstrap
 
-*Same 14 skills, different invocation methods - choose the environment that fits your workflow.*
+*Same 14 skills, same natural language interface - both environments understand Superpowers without explicit commands.*
 
 ---
 
@@ -33,17 +33,18 @@ The Superpowers approach transforms how we think about code quality, testing, an
 
 ## Installation
 
-### Option 1: VS Code Copilot Chat (Slash Commands)
+### Option 1: VS Code Copilot Chat (Natural Language + Slash Commands)
 
 ```bash
-# Clone this repository
+# One-line install
+curl -fsSL https://raw.githubusercontent.com/earchibald/vsc-superpowers/main/install-superpowers.sh | bash
+
+# Or clone and run manually
 git clone https://github.com/earchibald/vsc-superpowers.git
 cd vsc-superpowers
-
-# Run the installer
 ./install-superpowers.sh
 
-# Reload VS Code
+# Reload VS Code to activate
 # Command Palette > Developer: Reload Window
 ```
 
@@ -70,23 +71,17 @@ The installer uses a **workspace-resident symlink approach** to prevent permissi
 1. **Preview Phase**: Shows what will be installed and asks for confirmation
 2. **Global Cache**: Clones Superpowers to `~/.cache/superpowers` (shared across workspaces)
 3. **Workspace Symlink**: Creates `./.superpowers → ~/.cache/superpowers` (workspace-local)
-4. **Path Updates**: Instructions reference `./.superpowers/skills/` (no absolute paths)
-5. **Prompts**: Copies skill definitions to `.github/prompts/` for slash commands
+4. **Instructions File**: Creates `.github/copilot-instructions.md` with Superpowers framework protocol
+5. **Path Updates**: Instructions reference `./.superpowers/skills/` (no absolute paths)
+6. **Prompts**: Copies skill definitions to `.github/prompts/` for slash commands
 
-**Result:** Copilot reads all skills from workspace-local paths, **eliminating permission prompts** while keeping the global cache for efficiency.
-
-### Backup & Recovery
-
-If a `.superpowers` directory already exists, the installer backs it up to `.superpowers.old`. To restore:
-
-```bash
-rm .superpowers
-mv .superpowers.old .superpowers
-```
+**Result:** Copilot reads framework instructions from `.github/copilot-instructions.md` and **infers patterns naturally**. Slash commands in `.github/prompts/` available for explicit invocation. All paths workspace-local, **eliminating permission prompts**.
 
 ## Available Skills (14 Total)
 
-All 14 Superpowers skills are available as **slash commands in VS Code** and **plugin skills in Copilot CLI**:
+**Preferred interface:** Use natural language - Copilot infers the correct patterns from context. Slash commands available for explicit invocation when needed.
+
+All 14 Superpowers skills:
 
 - `/write-plan` - Create detailed implementation plans
 - `/execute-plan` - Execute plans with checkpoints  
@@ -109,37 +104,43 @@ All 14 Superpowers skills are available as **slash commands in VS Code** and **p
 
 **Deep dive:** [docs/SKILLS_REFERENCE.md](docs/SKILLS_REFERENCE.md) - Detailed descriptions of each skill with examples and anti-patterns.
 
-## Command Mapping
+## Usage Patterns
 
-### VS Code Slash Commands
+### VS Code Copilot Chat
 
-Some skills use different names to avoid conflicts with VS Code reserved commands:
+**Natural Language (Recommended):**
+- "I want to add authentication to this project" → Infers planning workflow
+- "Let's implement password validation with TDD" → Infers test-first development
+- "The tests are failing with TypeError" → Infers systematic investigation
 
-- `/write-plan` (instead of `/plan`) 
-- `/investigate` (instead of `/fix`)
+**Slash Commands (Explicit):**
+- `/write-plan` (instead of `/plan` - VS Code reserved)
+- `/investigate` (instead of `/fix` - VS Code reserved)
 
 ### Copilot CLI Plugin
 
-In Copilot CLI, use natural language or direct skill names:
-
+**Natural Language or Direct Skills:**
 - "create a plan" or "write-plan"
 - "debug this issue" or "investigate"
 
 ## Verification
 
-### VS Code Installation
+### Check Installation
 
-```bash
-./scripts/verify-installation.sh
+**Ask Copilot:**
+```
+What is Superpowers? Explain the Loop of Autonomy.
 ```
 
-### Plugin Installation
+If Copilot describes the framework correctly, installation is working.
 
+**Run Test Scripts:**
 ```bash
-# Test plugin infrastructure
-./scripts/test-plugin.sh
+# VS Code installation check
+./scripts/verify-installation.sh
 
-# Test Copilot CLI integration
+# CLI plugin tests
+./scripts/test-plugin.sh
 ./scripts/test-copilot-cli.sh
 ```
 
