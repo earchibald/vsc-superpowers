@@ -62,6 +62,8 @@ tmp/
 plan.md
 scratchpad.md
 IMPLEMENTATION_COMPLETE.md
-.github/
-!.github/hooks/
+.github/*
+!.github/plugin/
+!.github/plugin/**/*
+!.github/hooks/**/*
 .superpowers
