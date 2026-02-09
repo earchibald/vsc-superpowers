@@ -8,37 +8,39 @@ Your existing `~/.cache/superpowers` will interfere with testing because:
 - Can't verify bootstrap actually works (it's never triggered)
 - Can't test cache deletion/recovery workflows
 
-## The Solution: Isolated Test Environment
+## The Solution: Workspace-Local Isolated Test Environment
 
-### Approach: $HOME Override + Environment Variables
+### Approach: $HOME Override + Workspace `tmp/` Directory
 
-**Key Insight:** Use environment variables to simulate **any state** without touching your real home directory.
+**Key Insight:** Use a workspace-local `tmp/` directory (in `.gitignore`) to simulate **any state** without touching your real home directory or system temp.
 
 ```bash
 # User's real environment (unchanged)
 ~/.cache/superpowers/    ← Real, untouched
 
-# Test environment (isolated)
-/tmp/superpowers-test-$$/.cache/superpowers/  ← Test, temporary
-export HOME=/tmp/superpowers-test-$$
-export SUPERPOWERS_CACHE_DIR=/tmp/superpowers-test-$$/​.cache/superpowers
+# Test environment (workspace-local, isolated)
+./tmp/superpowers-test-12345/.cache/superpowers/  ← Test, temporary
+export HOME=./tmp/superpowers-test-12345
+export SUPERPOWERS_CACHE_DIR=./tmp/superpowers-test-12345/.cache/superpowers
 ```
 
-### Why This Works
+### Why This Approach
 
-1. **Isolation:** `HOME` points to temporary directory, not your real home
-2. **Realistic:** Tests actual file I/O, symlinks, shell behavior
-3. **Repeatable:** Can run multiple times, clean up after
-4. **Automatic:** No manual setup needed
-5. **No interference:** Your real `~/.cache/superpowers` never touched
+1. **Isolation:** `HOME` points to workspace `tmp/`, not your real home
+2. **Clean:** Artifacts stay in repo (git-ignored), easy to inspect
+3. **Portable:** No `/tmp` path assumptions, works anywhere
+4. **Local:** No system temp pollution
+5. **Repeatable:** Can run multiple times, clean up after
+6. **Debuggable:** Artifacts in workspace, easier to inspect
+7. **No interference:** Your real `~/.cache/superpowers` never touched
 
 ## Test Scenarios
 
 ### Scenario 1: Bootstrap Creates Cache (Fresh Install)
 
 ```bash
-# Setup
-export HOME=/tmp/test-home-$$
+# Setup (workspace-local tmp)
+export HOME=${PROJECT_ROOT}/tmp/test-home-$$
 export SUPERPOWERS_CACHE_DIR=$HOME/.cache/superpowers
 
 # Pre-condition: cache doesn't exist
@@ -63,13 +65,14 @@ bash .agents/bootstrap-superpowers.sh
 
 # Verify: No error, still works
 echo $? → 0
-```
+# Cleanup
+rm -rf "${PROJECT_ROOT}/tmp/test-home-$$"```
 
 ### Scenario 3: Fallback to Bundled (No Cache, No Internet)
 
 ```bash
-# Setup
-export HOME=/tmp/test-home-$$
+# Setup (workspace-local tmp)
+export HOME=${PROJECT_ROOT}/tmp/test-home-$$
 export SUPERPOWERS_CACHE_DIR=$HOME/.cache/superpowers
 
 # Pre-condition: no cache, no internet
@@ -84,20 +87,23 @@ ls .agents/skills/*/SKILL.md | wc -l → 14
 ### Scenario 4: Cache Exists, Use Cache (Production Path)
 
 ```bash
-# Setup: Simulate cache exists
-mkdir -p /tmp/cache-test/skills
+# Setup: Simulate cache exists (workspace-local tmp)
+mkdir -p "${PROJECT_ROOT}/tmp/cache-test/skills"
 for skill in brainstorm tdd investigate write-plan; do
-    mkdir -p /tmp/cache-test/skills/$skill
+    mkdir -p "${PROJECT_ROOT}/tmp/cache-test/skills/$skill"
 done
 
 # Pre-condition: cache exists from previous test
-[ -d /tmp/cache-test/skills ] → ✓
+[ -d "${PROJECT_ROOT}/tmp/cache-test/skills" ] → ✓
 
 # Action: Plugin loads skills
 # Expected: Uses cache, not bundled
 
-ln -s /tmp/cache-test/skills .agents/skills-active
+ln -s "${PROJECT_ROOT}/tmp/cache-test/skills" .agents/skills-active
 # Manifest should prefer symlink
+
+# Cleanup
+rm -rf "${PROJECT_ROOT}/tmp/cache-test"
 ```
 
 ## Test Execution
@@ -109,7 +115,7 @@ scripts/test-plugin.sh
 ```
 
 **What it does:**
-1. Creates isolated `$HOME` in `/tmp/superpowers-test-$$`
+1. Creates isolated `$HOME` in `./tmp/superpowers-test-$$` (workspace-local)
 2. Runs 7 test scenarios
 3. Reports pass/fail for each
 4. Cleans up after (or keeps for debugging with `--no-cleanup`)
@@ -128,7 +134,7 @@ Test 2: Bundled skills exist
 ✓ All required skills present
 
 Test 3: Bootstrap creates cache
-✓ Cache successfully created at /tmp/superpowers-test-12345/.cache/superpowers
+✓ Cache successfully created at ./tmp/superpowers-test-12345/.cache/superpowers
 
 Test 4: Bootstrap is idempotent
 ✓ Bootstrap script is safe to run multiple times
@@ -158,11 +164,14 @@ Custom test for specific scenario:
 ```bash
 # Test bootstrap with custom repo (e.g., local fork)
 export SUPERPOWERS_REPO_URL="file:///path/to/local/superpowers"
-export SUPERPOWERS_CACHE_DIR="/tmp/test-local-repo"
+export SUPERPOWERS_CACHE_DIR="${PROJECT_ROOT}/tmp/test-local-repo"
 bash .agents/bootstrap-superpowers.sh
 
 # Verify local repo was cloned
-ls /tmp/test-local-repo/skills
+ls "${PROJECT_ROOT}/tmp/test-local-repo/skills"
+
+# Cleanup
+rm -rf "${PROJECT_ROOT}/tmp/test-local-repo"
 ```
 
 ### CI/CD Integration
@@ -188,7 +197,7 @@ jobs:
 
 ```bash
 # Now supports environment variable overrides
-export SUPERPOWERS_CACHE_DIR="/tmp/test-cache"
+export SUPERPOWERS_CACHE_DIR="${PROJECT_ROOT}/tmp/test-cache"
 export SUPERPOWERS_REPO_URL="file:///local/repo"
 bash .agents/bootstrap-superpowers.sh
 ```

@@ -8,11 +8,12 @@
 
 ## How It Works
 
-### 1. Isolated Environment (`$HOME` Override)
+### 1. Isolated Environment (`$HOME` Override + Workspace-Local Temp)
 
 ```bash
-# Create temp home directory for testing
-TEST_HOME="/tmp/superpowers-test-$$"
+# Create temp home directory for testing (workspace-local)
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+TEST_HOME="${PROJECT_ROOT}/tmp/superpowers-test-$$"
 mkdir -p "$TEST_HOME"
 
 # Override user's home
@@ -24,7 +25,7 @@ cd /Users/earchibald/work/vsc-superpowers
 bash .agents/bootstrap-superpowers.sh
 
 # Real ~/.cache/superpowers: UNTOUCHED ✓
-# Test cache: /tmp/superpowers-test-$$/.cache/superpowers
+# Test cache: ./tmp/superpowers-test-$$/.cache/superpowers (git ignored)
 ```
 
 ### 2. Test Script (`scripts/test-plugin.sh`)
@@ -53,8 +54,8 @@ Bootstrap script now supports testing:
 # Production (normal use)
 ~/.cache/superpowers available automatically
 
-# Testing (isolated)
-export SUPERPOWERS_CACHE_DIR="/tmp/test-cache"
+# Testing (isolated, workspace-local)
+export SUPERPOWERS_CACHE_DIR="${PROJECT_ROOT}/tmp/test-cache"
 export SUPERPOWERS_REPO_URL="file:///local/repo"
 bash .agents/bootstrap-superpowers.sh
 ```
@@ -77,7 +78,7 @@ bash scripts/test-plugin.sh
 bash scripts/test-plugin.sh --no-cleanup
 
 # Manually test in the isolated environment
-export HOME="/tmp/superpowers-test-<id>"
+export HOME="${PROJECT_ROOT}/tmp/superpowers-test-<id>"
 cd .agents
 ./bootstrap-superpowers.sh
 # Inspect: ls -la ~/.cache/superpowers
@@ -86,9 +87,9 @@ cd .agents
 ### With Custom Repo
 
 ```bash
-# Test with local copy of obra/superpowers (faster)
-git clone https://github.com/obra/superpowers /tmp/superpowers-mirror
-export SUPERPOWERS_REPO_URL="file:///tmp/superpowers-mirror"
+# Test with local copy of obra/superpowers (workspace-local, faster)
+git clone https://github.com/obra/superpowers "${PROJECT_ROOT}/tmp/superpowers-mirror"
+export SUPERPOWERS_REPO_URL="file://${PROJECT_ROOT}/tmp/superpowers-mirror"
 bash scripts/test-plugin.sh
 ```
 
@@ -96,11 +97,11 @@ bash scripts/test-plugin.sh
 
 ```
 Setting up isolated test environment...
-✓ Isolated HOME: /tmp/superpowers-test-84423
-✓ Test CACHE_DIR: /tmp/superpowers-test-84423/.cache/superpowers
+✓ Isolated HOME: ./tmp/superpowers-test-84423
+✓ Test CACHE_DIR: ./tmp/superpowers-test-84423/.cache/superpowers
 
 Test 1: Bootstrap creates cache
-✓ Cache successfully created at /tmp/superpowers-test-84423/.cache/superpowers
+✓ Cache successfully created at ./tmp/superpowers-test-84423/.cache/superpowers
 
 Test 2: Bootstrap is idempotent
 ✓ Bootstrap script is safe to run multiple times
