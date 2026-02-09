@@ -6,6 +6,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Source verification marker library
+source "$SCRIPT_DIR/verification-lib.sh"
+
 # Colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -47,6 +50,32 @@ fi
 
 echo ""
 echo "========================================"
+echo ""
+
+# Run verification marker tests
+echo -e "${BLUE}Suite 3: Verification Markers${NC}"
+TOTAL_SUITES=$((TOTAL_SUITES + 1))
+if "$SCRIPT_DIR/verification-marker.test.sh"; then
+    PASSED_SUITES=$((PASSED_SUITES + 1))
+else
+    FAILED_SUITES=$((FAILED_SUITES + 1))
+fi
+
+echo ""
+echo "========================================"
+echo ""
+
+# Run integration tests
+echo -e "${BLUE}Suite 4: Verification Marker Integration${NC}"
+TOTAL_SUITES=$((TOTAL_SUITES + 1))
+if "$SCRIPT_DIR/integration.test.sh"; then
+    PASSED_SUITES=$((PASSED_SUITES + 1))
+else
+    FAILED_SUITES=$((FAILED_SUITES + 1))
+fi
+
+echo ""
+echo "========================================"
 echo "Overall Results"
 echo "========================================"
 echo "Test suites run:    $TOTAL_SUITES"
@@ -56,8 +85,18 @@ echo ""
 
 if [ $FAILED_SUITES -eq 0 ]; then
     echo -e "${GREEN}✓ All test suites passed!${NC}"
+    echo ""
+    
+    # Create verification marker on success
+    create_verification_marker "$PROJECT_ROOT"
+    
     exit 0
 else
     echo -e "${RED}✗ Some test suites failed${NC}"
+    echo ""
+    
+    # Remove verification marker on failure
+    remove_verification_marker "$PROJECT_ROOT"
+    
     exit 1
 fi
