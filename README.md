@@ -113,6 +113,114 @@ All 14 Superpowers skills:
 
 **Deep dive:** [docs/SKILLS_REFERENCE.md](docs/SKILLS_REFERENCE.md) - Detailed descriptions of each skill with examples and anti-patterns.
 
+## Copilot CLI Hooks (Iron Law Enforcement)
+
+**Available in:** Copilot CLI only (not VS Code Copilot Chat)
+
+Superpowers includes a **Copilot CLI plugin** with hooks that automatically enforce the **Iron Law of Verification**: "Never commit without running tests."
+
+### Architecture
+
+The `.github/hooks/` directory contains a Copilot CLI plugin with two hooks:
+
+**1. `sessionStart` - Bootstrap Hook**
+- Fires when you start a Copilot CLI session
+- Clones/updates `obra/superpowers` cache to `~/.cache/superpowers`
+- Displays "🦸 Superpowers Active" banner
+- Network failures don't block session (always exits 0)
+
+**2. `preToolUse` - Iron Law Guard**
+- Fires before Copilot CLI executes bash commands
+- Detects dangerous operations: `git commit`, `git push`
+- Checks for verification marker: `/tmp/.superpowers-verified-{project_hash}`
+- **Warns if:**
+  - No verification marker exists (tests haven't been run)
+  - Marker is stale (>1 hour old)
+- **Always exits 0** - educates with warnings, doesn't block execution
+
+### How Verification Works
+
+1. **Run tests:** `tests/hooks/run-all-tests.sh`
+2. **Tests pass:** Creates `/tmp/.superpowers-verified-{hash}` with timestamp
+3. **Tests fail:** Removes verification marker
+4. **Commit attempt:** Hook checks marker, warns if missing/stale
+5. **Marker expires:** After 1 hour, re-run tests to refresh
+
+**Project isolation:** Each workspace gets unique marker based on MD5 hash of project path. Multiple projects don't interfere.
+
+### Example Workflow
+
+```bash
+# Start copilot session - hook bootstraps cache
+$ copilot
+🦸 Superpowers Active
+
+# Make changes to code
+$ copilot "implement user authentication"
+[...copilot generates code...]
+
+# Try to commit without testing
+$ copilot "commit these changes"
+⚠️  Warning: No verification marker found
+⚠️  Run tests before committing (Iron Law of Verification)
+[commit proceeds with warning]
+
+# Run tests first
+$ tests/hooks/run-all-tests.sh
+✅ All tests passed!
+✅ Verification marker created: /tmp/.superpowers-verified-a1b2c3...
+
+# Now commit without warning
+$ copilot "commit these changes"
+[commit proceeds silently]
+```
+
+### Technical Details
+
+**Verification Markers:**
+- Location: `/tmp/.superpowers-verified-{project_hash}`
+- Format: Unix timestamp (seconds since epoch)
+- Expiration: 3600 seconds (1 hour)
+- Created: When test runners complete successfully
+- Removed: When tests fail or marker expires
+
+**Hook Implementation:**
+- Language: Bash (compatible with macOS/Linux)
+- JSON Parsing: Uses `jq` if available, falls back to `grep`/`sed`
+- Error Handling: All failures exit 0 (non-blocking)
+- Testing: 34/35 tests passing (97.1% coverage)
+
+**Test Runners Supporting Markers:**
+- `tests/hooks/run-all-tests.sh` (master test runner)
+- Add to your test scripts: `source tests/hooks/verification-lib.sh`
+
+### Testing the Hooks
+
+```bash
+# Run all hook tests
+tests/hooks/run-all-tests.sh
+
+# Test specific suites
+tests/hooks/session-start.test.sh      # Bootstrap hook
+tests/hooks/pre-command.test.sh        # Iron Law enforcement
+tests/hooks/verification-marker.test.sh # Marker lifecycle
+tests/hooks/integration.test.sh        # End-to-end integration
+```
+
+### Disabling Hooks
+
+If you need to disable verification warnings:
+
+```bash
+# Temporarily disable preToolUse hook
+mv .github/hooks/scripts/pre-command.sh .github/hooks/scripts/pre-command.sh.disabled
+
+# Re-enable
+mv .github/hooks/scripts/pre-command.sh.disabled .github/hooks/scripts/pre-command.sh
+```
+
+**Note:** Hooks educate but never block - you can always commit. The warnings help maintain the TDD discipline that makes Superpowers effective.
+
 ## Usage Patterns
 
 ### VS Code Copilot Chat

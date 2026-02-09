@@ -100,6 +100,8 @@ Before committing, PRing, or claiming work is done, you must run verification co
 **When to use:** Before any success claim, before commits, before PR creation, after claimed fixes  
 **Anti-patterns:** Assuming tests pass without running them, "it should work", skipping verification
 
+**⚡ Automated in Copilot CLI:** The `preToolUse` hook automatically enforces the Iron Law by warning when you try to commit without recent test verification (see [Automated Verification](#automated-verification-copilot-cli-only) below).
+
 ---
 
 ### 🌳 Git Workflows
@@ -306,6 +308,73 @@ Every task:
 2. Ready to merge? → `/finish-branch`
 3. Got feedback? → `/receive-review` then back to step 1
 ```
+
+---
+
+## Automated Verification (Copilot CLI Only)
+
+**Available in:** Copilot CLI with `.github/hooks/` plugin (not VS Code Copilot Chat)
+
+Superpowers includes hooks that automatically enforce the Iron Law: "Never commit without running tests."
+
+### How It Works
+
+**sessionStart Hook:**
+- Runs when you start `copilot` session
+- Bootstraps/updates `~/.cache/superpowers`
+- Shows "🦸 Superpowers Active" banner
+
+**preToolUse Hook (Iron Law Guard):**
+- Runs before `git commit` or `git push`
+- Checks for verification marker: `/tmp/.superpowers-verified-{project_hash}`
+- **Warns if:**
+  - No marker (tests haven't been run)
+  - Marker stale (>1 hour old)
+- **Always allows commit** (educates, doesn't block)
+
+### Workflow Example
+
+```bash
+# Start copilot
+$ copilot
+🦸 Superpowers Active
+
+# Make changes, try to commit
+$ copilot "commit these changes"
+⚠️  Warning: No verification marker found
+⚠️  Run tests before committing (Iron Law of Verification)
+
+# Run tests first
+$ tests/hooks/run-all-tests.sh
+✅ All tests passed!
+✅ Verification marker created
+
+# Now commit silently
+$ copilot "commit these changes"
+[no warning - marker exists and recent]
+```
+
+### Marker Management
+
+**Created by:** Test runners that source `tests/hooks/verification-lib.sh`  
+**Location:** `/tmp/.superpowers-verified-{MD5_of_workspace_path}`  
+**Expiration:** 1 hour (3600 seconds)  
+**Isolation:** Per-workspace (different projects don't interfere)
+
+### Testing Hooks
+
+```bash
+# Run all hook tests (34/35 passing)
+tests/hooks/run-all-tests.sh
+
+# Test specific hooks
+tests/hooks/session-start.test.sh      # Bootstrap
+tests/hooks/pre-command.test.sh        # Iron Law (11/11) ✅
+tests/hooks/verification-marker.test.sh # Markers (8/8) ✅
+tests/hooks/integration.test.sh        # Integration (8/8) ✅
+```
+
+**Learn more:** [docs/TESTING_HOOKS.md](TESTING_HOOKS.md)
 
 ---
 
