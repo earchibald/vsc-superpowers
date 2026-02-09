@@ -118,11 +118,14 @@ Tests the verification library integration with test runners.
 
 1. Install Copilot CLI: `npm install -g @githubnext/github-copilot-cli`
 2. Authenticate: `copilot auth`
-3. Ensure `.github/hooks/hooks.json` exists
+3. Ensure `hooks/hooks.json` exists
 
 ### Test Session Start Hook
 
 ```bash
+# Plugin install required first:
+copilot plugin install $(pwd)
+
 # Clear cache to test bootstrap
 rm -rf ~/.cache/superpowers
 
@@ -241,7 +244,7 @@ set -x  # Enable command tracing
 
 ```bash
 # Test hook manually
-echo '{"timestamp":"2026-02-08T12:00:00Z","cwd":"/tmp/test","toolName":"bash","toolArgs":"{\"command\":\"git commit -m test\"}"}' | .github/hooks/scripts/pre-command.sh
+echo '{"timestamp":"2026-02-08T12:00:00Z","cwd":"/tmp/test","toolName":"bash","toolArgs":"{\"command\":\"git commit -m test\"}"}' | hooks/scripts/pre-command.sh
 ```
 
 ### Inspect Verification Markers
@@ -262,7 +265,7 @@ echo -n "$(pwd)" | md5sum | cut -d' ' -f1
 **1. Syntax errors in bash:**
 ```bash
 # Check syntax without running
-bash -n .github/hooks/scripts/pre-command.sh
+bash -n hooks/scripts/pre-command.sh
 ```
 
 **2. JSON parsing failures:**

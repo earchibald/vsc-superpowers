@@ -121,7 +121,7 @@ Superpowers includes a **Copilot CLI plugin** with hooks that automatically enfo
 
 ### Architecture
 
-The `.github/hooks/` directory contains a Copilot CLI plugin with two hooks:
+The `hooks/` directory contains a Copilot CLI plugin with two hooks:
 
 **1. `sessionStart` - Bootstrap Hook**
 - Fires when you start a Copilot CLI session

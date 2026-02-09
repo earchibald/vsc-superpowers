@@ -313,7 +313,7 @@ Every task:
 
 ## Automated Verification (Copilot CLI Only)
 
-**Available in:** Copilot CLI with `.github/hooks/` plugin (not VS Code Copilot Chat)
+**Available in:** Copilot CLI with `hooks/` plugin (not VS Code Copilot Chat)
 
 Superpowers includes hooks that automatically enforce the Iron Law: "Never commit without running tests."
 
