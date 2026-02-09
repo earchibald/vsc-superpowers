@@ -16,7 +16,8 @@ NC='\033[0m' # No Color
 
 # Test configuration
 TEST_ID="$$"
-TEST_HOME="/tmp/superpowers-test-${TEST_ID}"
+TEST_TMP_DIR="${PROJECT_ROOT}/tmp/superpowers-test-${TEST_ID}"
+TEST_HOME="${TEST_TMP_DIR}"
 TEST_CACHE_DIR="${TEST_HOME}/.cache/superpowers"
 BUNDLED_SKILLS_PATH="${PROJECT_ROOT}/.agents/skills"
 
@@ -35,6 +36,7 @@ setup_test_env() {
     
     echo -e "${GREEN}✓${NC} Isolated HOME: $TEST_HOME"
     echo -e "${GREEN}✓${NC} Test CACHE_DIR: $TEST_CACHE_DIR"
+    echo -e "${YELLOW}Note:${NC} Test artifacts in: $TEST_TMP_DIR"
 }
 
 # Cleanup test environment
@@ -267,7 +269,7 @@ main() {
     else
         echo -e "\n${YELLOW}Note: Test files not cleaned up${NC}"
         echo -e "Test HOME: $TEST_HOME"
-        echo -e "Clean up manually: rm -rf $TEST_HOME"
+        echo -e "Clean up manually: rm -rf $TEST_TMP_DIR"
     fi
     
     exit $RESULT

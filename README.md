@@ -1,10 +1,18 @@
-# VS Code Superpowers
+# Superpowers for VS Code & Copilot CLI
 
-An implementation of the [Superpowers](https://github.com/obra/superpowers) framework for GitHub Copilot in VS Code, providing all 14 core skills as native slash commands.
+An implementation of the [Superpowers](https://github.com/obra/superpowers) framework for GitHub Copilot, providing all 14 core skills as **native slash commands in VS Code** and as a **plugin for Copilot CLI**.
 
 ## What is Superpowers?
 
 Superpowers is a complete software development workflow for coding agents, built on a set of composable "skills" that enforce best practices like TDD, systematic debugging, and comprehensive planning.
+
+## Two Ways to Use
+
+**VS Code Copilot Chat** - Slash commands (`/write-plan`, `/tdd`, etc.) integrated directly into VS Code via `.github/prompts/`
+
+**Copilot CLI Plugin** - Natural language or direct skill invocation in terminal via `.agents/` plugin architecture with auto-bootstrap
+
+*Same 14 skills, different invocation methods - choose the environment that fits your workflow.*
 
 ---
 
@@ -25,6 +33,8 @@ The Superpowers approach transforms how we think about code quality, testing, an
 
 ## Installation
 
+### Option 1: VS Code Copilot Chat (Slash Commands)
+
 ```bash
 # Clone this repository
 git clone https://github.com/earchibald/vsc-superpowers.git
@@ -37,7 +47,23 @@ cd vsc-superpowers
 # Command Palette > Developer: Reload Window
 ```
 
-### How Installation Works
+### Option 2: Copilot CLI Plugin
+
+```bash
+# Install directly from repository
+copilot plugin add https://github.com/earchibald/vsc-superpowers
+
+# On first use, the plugin automatically bootstraps:
+# - Clones obra/superpowers to ~/.cache/superpowers
+# - Links plugin skills to shared cache
+# - Falls back to bundled skills if cache unavailable
+```
+
+**Note:** Both installations can coexist - use slash commands in VS Code and natural language in terminal.
+
+**Background Agent Limitation:** VS Code's background agent does not currently have access to Copilot CLI plugins. This is a separate issue being tracked and does not affect the primary VS Code Chat or CLI terminal workflows.
+
+### How VS Code Installation Works
 
 The installer uses a **workspace-resident symlink approach** to prevent permission prompts:
 
@@ -60,7 +86,7 @@ mv .superpowers.old .superpowers
 
 ## Available Skills (14 Total)
 
-All 14 Superpowers skills are available as slash commands:
+All 14 Superpowers skills are available as **slash commands in VS Code** and **plugin skills in Copilot CLI**:
 
 - `/write-plan` - Create detailed implementation plans
 - `/execute-plan` - Execute plans with checkpoints  
@@ -85,15 +111,36 @@ All 14 Superpowers skills are available as slash commands:
 
 ## Command Mapping
 
+### VS Code Slash Commands
+
 Some skills use different names to avoid conflicts with VS Code reserved commands:
 
 - `/write-plan` (instead of `/plan`) 
 - `/investigate` (instead of `/fix`)
 
+### Copilot CLI Plugin
+
+In Copilot CLI, use natural language or direct skill names:
+
+- "create a plan" or "write-plan"
+- "debug this issue" or "investigate"
+
 ## Verification
+
+### VS Code Installation
 
 ```bash
 ./scripts/verify-installation.sh
+```
+
+### Plugin Installation
+
+```bash
+# Test plugin infrastructure
+./scripts/test-plugin.sh
+
+# Test Copilot CLI integration
+./scripts/test-copilot-cli.sh
 ```
 
 ## Troubleshooting
