@@ -62,8 +62,6 @@ tmp/
 plan.md
 scratchpad.md
 IMPLEMENTATION_COMPLETE.md
-.github/*
-!.github/plugin/
-!.github/plugin/**/*
-!.github/hooks/**/*
+.github/copilot-instructions.md
+.github/prompts/
 .superpowers
