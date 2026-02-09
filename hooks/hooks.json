@@ -4,7 +4,7 @@
     "sessionStart": [
       {
         "type": "command",
-        "bash": "bash \"${COPILOT_PLUGIN_DIR:-.}/.github/hooks/scripts/session-start.sh\"",
+        "bash": "bash \"${HOME}/.copilot/installed-plugins/_direct/vsc-superpowers/hooks/scripts/session-start.sh\"",
         "cwd": ".",
         "timeoutSec": 30
       }
@@ -12,7 +12,7 @@
     "preToolUse": [
       {
         "type": "command",
-        "bash": "bash \"${COPILOT_PLUGIN_DIR:-.}/.github/hooks/scripts/pre-command.sh\"",
+        "bash": "bash \"${HOME}/.copilot/installed-plugins/_direct/vsc-superpowers/hooks/scripts/pre-command.sh\"",
         "cwd": ".",
         "timeoutSec": 10
       }

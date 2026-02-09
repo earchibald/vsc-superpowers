@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+echo "🦸 Superpowers Active" >&2
 # Copilot CLI Hook: Session Start
 # Bootstrap Superpowers cache and display activation banner
 
