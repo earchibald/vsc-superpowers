@@ -157,8 +157,6 @@ detect_conflicts
 echo "ℹ️  To learn more about symlink-based installation,"
 echo "   see docs/plans/2026-02-08-symlink-installer-design.md"
 echo ""
-echo -n "✅ Proceed with installation? (Y/n): "
-read -r response
 if [[ ! -t 0 ]] ; then
     echo -n "✅ Proceed with installation? (Y/n): "
     read -r response
