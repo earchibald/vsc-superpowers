@@ -6,5 +6,6 @@
     "name": "earchibald"
   },
   "repository": "https://github.com/earchibald/vsc-superpowers",
-  "license": "MIT"
+  "license": "MIT",
+  "hooks": ".github/hooks/hooks.json"
 }
