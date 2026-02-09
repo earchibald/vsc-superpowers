@@ -1,5 +1,19 @@
 # Superpowers Cheat Sheet
 
+## Using Superpowers
+
+**Natural Language Interface (Recommended):** Simply describe what you want to do. Copilot infers the correct Superpowers pattern:
+- "I want to add user authentication" → Planning workflow
+- "Let's implement this with TDD" → Test-driven development
+- "The tests are failing" → Systematic investigation
+- "Continue with the implementation" → Loop of Autonomy (reads plan.md)
+
+**Slash Commands (Explicit):** Use `/write-plan`, `/tdd`, `/investigate` etc. when you want explicit skill invocation.
+
+**The diagrams below illustrate how Superpowers workflows operate naturally - Copilot understands these patterns from context.**
+
+---
+
 Quick reference guide for all 14 Superpowers skills with one-liners, detailed descriptions, and workflow diagrams.
 
 ---

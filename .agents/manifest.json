@@ -1,0 +1,116 @@
+{
+  "name": "superpowers",
+  "version": "1.0.0",
+  "description": "Superpowers Agent Skills - Systematic development practices for generative agents",
+  "author": "earchibald",
+  "repository": "https://github.com/earchibald/vsc-superpowers",
+  
+  "skills": {
+    "source": "hybrid",
+    "bundled-skills-path": ".agents/skills",
+    "cache-path": "~/.cache/superpowers/skills",
+    "bootstrap": {
+      "script": ".agents/bootstrap-superpowers.sh",
+      "description": "Initialize shared Superpowers cache from upstream obra/superpowers repository"
+    }
+  },
+
+  "commands": {
+    "brainstorm": {
+      "name": "brainstorm",
+      "skill": "brainstorm",
+      "description": "Generate creative solutions and explore ideas - use before any creative work"
+    },
+    "write-plan": {
+      "name": "write-plan",
+      "skill": "write-plan",
+      "description": "Create detailed implementation plans from specifications or requirements"
+    },
+    "execute-plan": {
+      "name": "execute-plan",
+      "skill": "execute-plan",
+      "description": "Execute an implementation plan with checkpoints in a separate session"
+    },
+    "tdd": {
+      "name": "tdd",
+      "skill": "tdd",
+      "description": "Implement code using strict TDD cycles - write failing test first"
+    },
+    "investigate": {
+      "name": "investigate",
+      "skill": "investigate",
+      "description": "Perform systematic root-cause analysis of bugs and test failures"
+    },
+    "verify": {
+      "name": "verify",
+      "skill": "verify",
+      "description": "Ensure fixes work before claiming success with verification evidence"
+    },
+    "worktree": {
+      "name": "worktree",
+      "skill": "worktree",
+      "description": "Create isolated workspace for parallel development using git worktrees"
+    },
+    "finish-branch": {
+      "name": "finish-branch",
+      "skill": "finish-branch",
+      "description": "Merge, create PR, discard, or keep development work - handles branch lifecycle"
+    },
+    "review": {
+      "name": "review",
+      "skill": "review",
+      "description": "Request code review from subagent - mandatory after each task"
+    },
+    "receive-review": {
+      "name": "receive-review",
+      "skill": "receive-review",
+      "description": "Respond to code review feedback with technical rigor"
+    },
+    "subagent-dev": {
+      "name": "subagent-dev",
+      "skill": "subagent-dev",
+      "description": "Dispatch subagents for task-by-task development with review checkpoints"
+    },
+    "dispatch-agents": {
+      "name": "dispatch-agents",
+      "skill": "dispatch-agents",
+      "description": "Run concurrent subagent workflows for independent problem domains"
+    },
+    "write-skill": {
+      "name": "write-skill",
+      "skill": "write-skill",
+      "description": "Create new skills following TDD best practices"
+    },
+    "superpowers": {
+      "name": "superpowers",
+      "skill": "superpowers",
+      "description": "Learn about Superpowers capabilities and how to find and use skills"
+    }
+  },
+
+  "dependencies": {
+    "git": "Required for cache initialization",
+    "bash": "Required for bootstrap script"
+  },
+
+  "initialization": {
+    "on-first-use": "Run bootstrap script if cache doesn't exist",
+    "behaviors": [
+      "Load bundled skills from .agents/skills",
+      "Link to ~/.cache/superpowers/skills if cache exists after bootstrap",
+      "Fall back to bundled if cache unavailable"
+    ]
+  },
+
+  "platforms": {
+    "copilot-cli": "≥0.0.402",
+    "vs-code": "Symlink via installer (separate workflow)",
+    "agents": "Any agent supporting Agent Skills standard"
+  },
+
+  "installation": {
+    "copilot-cli": "copilot plugin add https://github.com/earchibald/vsc-superpowers",
+    "vs-code": "./install-superpowers.sh (existing workflow)",
+    "manual": "Clone repo, run .agents/bootstrap-superpowers.sh"
+  }
+}
