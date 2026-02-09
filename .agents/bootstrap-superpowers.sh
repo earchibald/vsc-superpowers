@@ -2,11 +2,16 @@
 # Bootstrap Superpowers cache from upstream repository
 # This script initializes ~/.cache/superpowers if it doesn't exist
 # Called by plugin on first use or during setup
+#
+# Environment Variables:
+#   SUPERPOWERS_CACHE_DIR  - Override default cache location (for testing)
+#   SUPERPOWERS_REPO_URL   - Override upstream repository (for testing)
 
 set -e
 
-CACHE_DIR="${HOME}/.cache/superpowers"
-REPO_URL="https://github.com/obra/superpowers.git"
+# Allow override for testing
+CACHE_DIR="${SUPERPOWERS_CACHE_DIR:-${HOME}/.cache/superpowers}"
+REPO_URL="${SUPERPOWERS_REPO_URL:-https://github.com/obra/superpowers.git}"
 
 echo "📦 Bootstrapping Superpowers cache..."
 
