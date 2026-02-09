@@ -4,12 +4,12 @@
     "sessionStart": {
       "description": "Bootstrap Superpowers cache and display activation banner",
       "command": "bash",
-      "args": [".github/hooks/scripts/session-start.sh"]
+      "args": ["-c", "PLUGIN_DIR=\"${COPILOT_PLUGIN_DIR:-.}\"; bash \"$PLUGIN_DIR/.github/hooks/scripts/session-start.sh\""]
     },
     "preToolUse": {
       "description": "Enforce Iron Law of Verification before dangerous commands",
       "command": "bash",
-      "args": [".github/hooks/scripts/pre-command.sh"],
+      "args": ["-c", "PLUGIN_DIR=\"${COPILOT_PLUGIN_DIR:-.}\"; bash \"$PLUGIN_DIR/.github/hooks/scripts/pre-command.sh\""],
       "tools": ["bash"]
     }
   }
