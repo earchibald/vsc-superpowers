@@ -159,11 +159,14 @@ echo "   see docs/plans/2026-02-08-symlink-installer-design.md"
 echo ""
 echo -n "✅ Proceed with installation? (Y/n): "
 read -r response
-if [[ ! "$response" =~ ^[Yy]$ ]] && [ -n "$response" ]; then
-    echo "cancelled."
-    exit 0
+if [[ ! -t 0 ]] ; then
+    echo -n "✅ Proceed with installation? (Y/n): "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]] && [ -n "$response" ]; then
+        echo "cancelled."
+        exit 0
+    fi
 fi
-
 echo ""
 echo "🔨 EXECUTING INSTALLATION..."
 echo "═══════════════════════════════════════════════════════════════"
